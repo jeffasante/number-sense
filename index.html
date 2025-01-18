@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emotional Data Refinement</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #7FDBFF;
+            font-family: monospace;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .terminal {
+            width: 800px;
+            max-width: 90%;
+            background: #000;
+            border: 1px solid #7FDBFF;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(127, 219, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .instruction {
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .data-field {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .number-group {
+            padding: 10px;
+            background: rgba(127, 219, 255, 0.05);
+            border: 1px solid rgba(127, 219, 255, 0.1);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .number-group:hover {
+            background: rgba(127, 219, 255, 0.1);
+        }
+
+        .number-group.selected {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.3);
+        }
+
+        .response-text {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+
+        .number-group:hover .response-text {
+            opacity: 1;
+        }
+
+        .metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 10px;
+            border-top: 1px solid rgba(127, 219, 255, 0.2);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.2em;
+            color: #7FDBFF;
+        }
+
+        .metric-label {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .emotional-prompt {
+            text-align: center;
+            margin: 20px 0;
+            font-style: italic;
+            color: #999;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .emotional-prompt.visible {
+            opacity: 1;
+        }
+
+        #submitBtn {
+            background: none;
+            border: 1px solid #7FDBFF;
+            color: #7FDBFF;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            font-family: monospace;
+            transition: all 0.3s;
+        }
+
+        #submitBtn:hover {
+            background: rgba(127, 219, 255, 0.1);
+        }
+
+        
+         /* How to play styles */
+         .how-to-play {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #7FDBFF;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .how-to-play.visible {
+            display: block;
+        }
+
+        .how-to-play h2 {
+            color: #7FDBFF;
+            margin-top: 0;
+        }
+
+        .toggle-how-to {
+            background: none;
+            border: 1px solid #7FDBFF;
+            color: #7FDBFF;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: monospace;
+            margin-bottom: 20px;
+        }
+
+          /* Footer styles */
+          .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .footer-text {
+            margin: 0;
+        }
+
+        .heart {
+            color: #ff4444;
+            animation: beat 1s infinite;
+        }
+
+        .footer-link {
+            color: #7FDBFF;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <button class="toggle-how-to" onclick="toggleHowTo()">How to Play</button>
+
+    <div class="how-to-play" id="howToPlay">
+        <h2>How to Play</h2>
+        <p>1. You'll see a grid of dots and numbers</p>
+        <p>2. Some numbers will feel wrong or unsettling</p>
+        <p>3. Click on numbers that feel out of place</p>
+        <p>4. Submit your refinement when ready</p>
+        <p>5. Trust your emotional response - there are no logical rules</p>
+        <p><em>Inspired by the TV show "Severance"</em></p>
+    </div>
+
+    <div class="terminal">
+        <div class="header">
+            <h1>Data Refinement Terminal</h1>
+            <div class="instruction">Trust your emotional response. Select the numbers that feel wrong.</div>
+        </div>
+       
+        <div id="emotionalPrompt" class="emotional-prompt">
+            What does your intuition tell you about these numbers?
+        </div>
+
+        <div id="dataField" class="data-field">
+            <!-- Numbers will be generated here -->
+        </div>
+
+        <button id="submitBtn" onclick="submitSelection()">Submit Refinement</button>
+
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-value" id="intuitionScore">0%</div>
+                <div class="metric-label">Intuition Alignment</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="refinementCount">0</div>
+                <div class="metric-label">Refinements Made</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="emotionalAccuracy">0.00</div>
+                <div class="metric-label">Emotional Resonance</div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="terminal-id">MDR :: TERMINAL 7</div>
+
+    <footer class="footer">
+        <p class="footer-text">
+            Created with <span class="heart">❤️</span> by
+            <a href="https://github.com/jeffasante" target="_blank" class="footer-link">jeffasante</a>
+        </p>
+    </footer>
+
+
+    <script>
+        let selectedGroups = new Set();
+        let refinements = 0;
+        let emotionalResponses = [
+            "Something feels off...",
+            "This pattern is disturbing",
+            "These numbers resonate wrongly",
+            "There's an unsettling quality",
+            "This sequence feels malicious",
+            "Something's not right here",
+            "These numbers don't belong",
+            "This pattern is concerning"
+        ];
+
+        function generateNumberGroup() {
+            // Generate groups of numbers that might feel wrong
+            let groups = [];
+            for (let i = 0; i < 16; i++) {
+                let numbers = [];
+                // Create patterns that might trigger emotional responses
+                if (Math.random() < 0.3) {
+                    // Generate "unsettling" patterns
+                    numbers = Array(4).fill().map(() => 
+                        Math.floor(Math.random() * 9) + 1
+                    ).sort((a, b) => 
+                        Math.random() < 0.5 ? -1 : 1
+                    );
+                } else {
+                    // Generate "normal" patterns
+                    let base = Math.floor(Math.random() * 9) + 1;
+                    numbers = [base, base, base, base].map(n => 
+                        n + Math.floor(Math.random() * 3)
+                    );
+                }
+                groups.push(numbers);
+            }
+            return groups;
+        }
+
+        function displayNumbers() {
+            const dataField = document.getElementById('dataField');
+            dataField.innerHTML = '';
+            
+            generateNumberGroup().forEach((group, index) => {
+                const div = document.createElement('div');
+                div.className = 'number-group';
+                div.innerHTML = `
+                    ${group.join(' ')}
+                    <div class="response-text">${emotionalResponses[Math.floor(Math.random() * emotionalResponses.length)]}</div>
+                `;
+                div.onclick = () => toggleSelection(div, index);
+                dataField.appendChild(div);
+            });
+        }
+
+        function toggleSelection(element, index) {
+            element.classList.toggle('selected');
+            if (selectedGroups.has(index)) {
+                selectedGroups.delete(index);
+            } else {
+                selectedGroups.add(index);
+            }
+            updateMetrics();
+        }
+
+        function updateMetrics() {
+            // Update metrics with intentionally vague calculations
+            document.getElementById('intuitionScore').textContent = 
+                `${Math.floor(Math.random() * 20 + selectedGroups.size * 5)}%`;
+            document.getElementById('emotionalAccuracy').textContent = 
+                (Math.random() * 0.3 + 0.7).toFixed(2);
+        }
+
+        function submitSelection() {
+            if (selectedGroups.size === 0) {
+                showEmotionalPrompt("Trust your instincts. Some numbers must be refined.");
+                return;
+            }
+
+            refinements++;
+            document.getElementById('refinementCount').textContent = refinements;
+            
+            // Show a new emotional prompt
+            showEmotionalPrompt("Processing your emotional response...");
+            
+            // Generate new numbers after a delay
+            setTimeout(() => {
+                selectedGroups.clear();
+                displayNumbers();
+                showEmotionalPrompt("What does your intuition tell you about these new patterns?");
+            }, 1000);
+        }
+
+        function showEmotionalPrompt(text) {
+            const prompt = document.getElementById('emotionalPrompt');
+            prompt.textContent = text;
+            prompt.classList.add('visible');
+            setTimeout(() => {
+                prompt.classList.remove('visible');
+            }, 3000);
+        }
+
+        function toggleHowTo() {
+            const howTo = document.getElementById('howToPlay');
+            howTo.classList.toggle('visible');
+        }
+
+
+        // Initialize
+        displayNumbers();
+    </script>
+</body>
+</html>
