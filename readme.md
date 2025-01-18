@@ -1,6 +1,9 @@
 # NumberSense: Emotional Data Refinement Game
 ![Game Interface](assets/img1.png)
 
+> [Play the Game](https://jeffasante.github.io/number-sense/) | [GitHub Repository](https://github.com/jeffasante/number-sense)
+
+
 A web-based game inspired by the mysterious data refinement work seen in Apple TV+'s "Severance". This project recreates the unsettling experience of selecting numbers based purely on emotional response, without knowing their true meaning.
 
 ## Overview
