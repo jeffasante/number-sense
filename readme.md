@@ -10,6 +10,10 @@ A web-based game inspired by the mysterious data refinement work seen in Apple T
 
 In the TV show "Severance", employees perform the mysterious task of "refining" numbers based purely on how they feel, without understanding what the numbers represent. This project recreates that experience as an interactive web game.
 
+The idea that workers are using pure emotional intuition to sort numbers, completely divorced from their meaning or context, is both absurd and eerily familiar. It reflects how many modern jobs involve manipulating abstract data without fully understanding its real-world impact or significance. The workers become human algorithms, processing information based on trained responses rather than genuine understanding.
+
+What makes it particularly clever is how it inverts our usual relationship with numbers. Typically, we think of numerical work as logical and emotionally neutral. But by making the sorting criteria purely emotional ("these numbers feel wrong"), the show highlights how arbitrary and alienating much of modern work can be. The workers aren't even granted the cold comfort of logical rules to follow.
+
 ## Features
 
 - **Intuitive Interface**: Clean, retro-terminal aesthetic matching the show's visual style

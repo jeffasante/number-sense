@@ -2,58 +2,71 @@
 <html>
 <head>
     <title>Emotional Data Refinement</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             background-color: #0a0a0a;
             color: #7FDBFF;
             font-family: monospace;
-            margin: 0;
-            padding: 20px;
+            padding: 10px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
         }
 
         .terminal {
-            width: 800px;
-            max-width: 90%;
+            width: 100%;
+            max-width: 800px;
             background: #000;
             border: 1px solid #7FDBFF;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 0 20px rgba(127, 219, 255, 0.1);
+            margin-bottom: 60px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            margin-bottom: 10px;
         }
 
         .instruction {
             color: #666;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-style: italic;
+            font-size: clamp(0.8rem, 3vw, 1rem);
         }
 
         .data-field {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-            gap: 15px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            gap: 10px;
+            padding: 15px;
             background: rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .number-group {
-            padding: 10px;
+            padding: 8px;
             background: rgba(127, 219, 255, 0.05);
             border: 1px solid rgba(127, 219, 255, 0.1);
             cursor: pointer;
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
+            font-size: clamp(0.8rem, 3vw, 1rem);
         }
 
         .number-group:hover {
@@ -70,10 +83,11 @@
             bottom: -20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.8em;
+            font-size: 0.7em;
             opacity: 0;
             transition: opacity 0.3s;
             white-space: nowrap;
+            z-index: 1;
         }
 
         .number-group:hover .response-text {
@@ -81,9 +95,10 @@
         }
 
         .metrics {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
             padding: 10px;
             border-top: 1px solid rgba(127, 219, 255, 0.2);
         }
@@ -93,22 +108,23 @@
         }
 
         .metric-value {
-            font-size: 1.2em;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             color: #7FDBFF;
         }
 
         .metric-label {
-            font-size: 0.8em;
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
             color: #666;
         }
 
         .emotional-prompt {
             text-align: center;
-            margin: 20px 0;
+            margin: 15px 0;
             font-style: italic;
             color: #999;
             opacity: 0;
             transition: opacity 0.5s;
+            font-size: clamp(0.8rem, 3vw, 1rem);
         }
 
         .emotional-prompt.visible {
@@ -119,26 +135,27 @@
             background: none;
             border: 1px solid #7FDBFF;
             color: #7FDBFF;
-            padding: 10px 20px;
+            padding: 8px 16px;
             cursor: pointer;
             display: block;
-            margin: 20px auto;
+            margin: 15px auto;
             font-family: monospace;
             transition: all 0.3s;
+            font-size: clamp(0.8rem, 3vw, 1rem);
         }
 
         #submitBtn:hover {
             background: rgba(127, 219, 255, 0.1);
         }
 
-        
-         /* How to play styles */
-         .how-to-play {
+        .how-to-play {
             background: rgba(0, 0, 0, 0.8);
             border: 1px solid #7FDBFF;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
             display: none;
+            width: 100%;
+            max-width: 800px;
         }
 
         .how-to-play.visible {
@@ -147,7 +164,13 @@
 
         .how-to-play h2 {
             color: #7FDBFF;
-            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: clamp(1rem, 3.5vw, 1.4rem);
+        }
+
+        .how-to-play p {
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            margin-bottom: 8px;
         }
 
         .toggle-how-to {
@@ -157,47 +180,48 @@
             padding: 5px 10px;
             cursor: pointer;
             font-family: monospace;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: clamp(0.8rem, 3vw, 1rem);
         }
 
-          /* Footer styles */
-          .footer {
+        .footer {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             color: #666;
             position: fixed;
             bottom: 0;
             width: 100%;
             background: rgba(0, 0, 0, 0.8);
+            font-size: clamp(0.8rem, 3vw, 1rem);
         }
 
-        .footer-text {
-            margin: 0;
+        .terminal-id {
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            margin-bottom: 15px;
         }
 
-        .heart {
-            color: #ff4444;
-            animation: beat 1s infinite;
-        }
+        @media (max-width: 480px) {
+            .terminal {
+                padding: 10px;
+            }
 
-        .footer-link {
-            color: #7FDBFF;
-            text-decoration: none;
-        }
+            .data-field {
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+                gap: 8px;
+                padding: 10px;
+            }
 
-        .footer-link:hover {
-            text-decoration: underline;
-        }
+            .number-group {
+                padding: 6px;
+            }
 
-        @keyframes beat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            .metrics {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            }
         }
-
     </style>
 </head>
 <body>
-
     <button class="toggle-how-to" onclick="toggleHowTo()">How to Play</button>
 
     <div class="how-to-play" id="howToPlay">
@@ -241,7 +265,7 @@
             </div>
         </div>
     </div>
-    <br/>
+    
     <div class="terminal-id">MDR :: TERMINAL 7</div>
 
     <footer class="footer">
@@ -250,7 +274,6 @@
             <a href="https://github.com/jeffasante" target="_blank" class="footer-link">jeffasante</a>
         </p>
     </footer>
-
 
     <script>
         let selectedGroups = new Set();
@@ -267,20 +290,16 @@
         ];
 
         function generateNumberGroup() {
-            // Generate groups of numbers that might feel wrong
             let groups = [];
             for (let i = 0; i < 16; i++) {
                 let numbers = [];
-                // Create patterns that might trigger emotional responses
                 if (Math.random() < 0.3) {
-                    // Generate "unsettling" patterns
                     numbers = Array(4).fill().map(() => 
                         Math.floor(Math.random() * 9) + 1
                     ).sort((a, b) => 
                         Math.random() < 0.5 ? -1 : 1
                     );
                 } else {
-                    // Generate "normal" patterns
                     let base = Math.floor(Math.random() * 9) + 1;
                     numbers = [base, base, base, base].map(n => 
                         n + Math.floor(Math.random() * 3)
@@ -318,7 +337,6 @@
         }
 
         function updateMetrics() {
-            // Update metrics with intentionally vague calculations
             document.getElementById('intuitionScore').textContent = 
                 `${Math.floor(Math.random() * 20 + selectedGroups.size * 5)}%`;
             document.getElementById('emotionalAccuracy').textContent = 
@@ -334,10 +352,8 @@
             refinements++;
             document.getElementById('refinementCount').textContent = refinements;
             
-            // Show a new emotional prompt
             showEmotionalPrompt("Processing your emotional response...");
             
-            // Generate new numbers after a delay
             setTimeout(() => {
                 selectedGroups.clear();
                 displayNumbers();
@@ -358,7 +374,6 @@
             const howTo = document.getElementById('howToPlay');
             howTo.classList.toggle('visible');
         }
-
 
         // Initialize
         displayNumbers();
