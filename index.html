@@ -184,15 +184,38 @@
             font-size: clamp(0.8rem, 3vw, 1rem);
         }
 
+        /* Footer styles */
         .footer {
             text-align: center;
-            padding: 15px;
+            padding: 20px;
             color: #666;
             position: fixed;
             bottom: 0;
             width: 100%;
             background: rgba(0, 0, 0, 0.8);
-            font-size: clamp(0.8rem, 3vw, 1rem);
+        }
+
+        .footer-text {
+            margin: 0;
+        }
+
+        .heart {
+            color: #ff4444;
+            animation: beat 1s infinite;
+        }
+
+        .footer-link {
+            color: #7FDBFF;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .terminal-id {
